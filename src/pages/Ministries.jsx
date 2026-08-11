@@ -273,7 +273,7 @@ export default function Ministries() {
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Nattly Goshen"
+                        placeholder="Turyasingura Grace "
                         value={joinForm.name}
                         onChange={(e) => setJoinForm({ ...joinForm, name: e.target.value })}
                         required
@@ -284,7 +284,7 @@ export default function Ministries() {
                       <input
                         type="email"
                         className="form-control"
-                        placeholder="nattlyjoanah@gmail.com"
+                        placeholder="turyasinguragrace@gmail.com"
                         value={joinForm.email}
                         onChange={(e) => setJoinForm({ ...joinForm, email: e.target.value })}
                         required
@@ -296,7 +296,7 @@ export default function Ministries() {
                     <input
                       type="tel"
                       className="form-control"
-                      placeholder="+256 756460206"
+                      placeholder="+256 785141496"
                       value={joinForm.phone}
                       onChange={(e) => setJoinForm({ ...joinForm, phone: e.target.value })}
                     />

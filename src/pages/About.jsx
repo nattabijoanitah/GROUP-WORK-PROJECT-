@@ -273,7 +273,7 @@ export default function About() {
                 A WARM WELCOME FROM THE PULPIT
               </h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-                "Greetings to you in the precious name of our Lord and Savior Jesus Christ! I am thrilled that you are exploring Ihema Christian Fellowship online. My wife and I, alongside the entire church board, welcome you."
+                "Greetings to you in the precious name of our Lord and Savior Jesus Christ! I am thrilled that you are exploring Ihema Christian Fellowship online alongside the entire church board, welcome you."
               </p>
               <p style={{ color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
                 "Our prayer for you is that you experience the fullness of God's presence, discover the unique spiritual gifts given to you, and walk in total favor. We invite you to join us this Sunday for an encounter with the Holy Ghost."

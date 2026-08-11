@@ -148,7 +148,7 @@ export default function JoinUs() {
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="John Doe"
+                      placeholder="Turyasingura Grace "
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
@@ -159,7 +159,7 @@ export default function JoinUs() {
                     <input
                       type="email"
                       className="form-control"
-                      placeholder="john@example.com"
+                      placeholder="turyasinguragrace.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       required
@@ -172,7 +172,7 @@ export default function JoinUs() {
                   <input
                     type="tel"
                     className="form-control"
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+256785141496"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required

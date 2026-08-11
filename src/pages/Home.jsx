@@ -193,10 +193,6 @@ export default function Home() {
               <h3 style={{ fontSize: '3rem', color: 'var(--accent-gold)', fontWeight: 'bold' }}>20+</h3>
               <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>Global Missions</span>
             </div>
-            <div>
-              <h3 style={{ fontSize: '3rem', color: 'var(--accent-gold)', fontWeight: 'bold' }}>15+</h3>
-              <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>Workers in Fellowship</span>
-            </div>
           </div>
         </div>
       </section>

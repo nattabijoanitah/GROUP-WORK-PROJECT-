@@ -278,7 +278,7 @@ export default function Give() {
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Nattabi Joanitah"
+                          placeholder="Turyasingura Grace "
                           value={form.name}
                           onChange={(e) => setForm({ ...form, name: e.target.value })}
                           required
@@ -289,7 +289,7 @@ export default function Give() {
                         <input
                           type="email"
                           className="form-control"
-                          placeholder="nattabijoanitah563@gmail.com"
+                          placeholder="turyasinguragrace@gmail.com"
                           value={form.email}
                           onChange={(e) => setForm({ ...form, email: e.target.value })}
                           required
