@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../api/config';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ export default function AdminLogin() {
 
     try {
       const response = await fetch(
-        'http://127.0.0.1:5000/api/auth/login',
+        `${API_BASE_URL}/api/auth/login`,
         {
           method: 'POST',
           headers: {

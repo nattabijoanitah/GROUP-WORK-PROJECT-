@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../api/config';
 
 export default function AdminGallery() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function AdminGallery() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const API_URL = 'http://127.0.0.1:5000/api/admin/gallery';
+  const API_URL = `${API_BASE_URL}/api/admin/gallery`;
 
   const getToken = () => {
     return localStorage.getItem('access_token');
@@ -386,7 +387,7 @@ export default function AdminGallery() {
             {items.map((item) => {
               const imageUrl = item.url?.startsWith('http')
                 ? item.url
-                : `http://127.0.0.1:5000/${item.url}`;
+                : `${API_BASE_URL}/${item.url}`;
 
               return (
                 <div
