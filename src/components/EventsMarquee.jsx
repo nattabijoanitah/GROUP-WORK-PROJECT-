@@ -1,18 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 import { eventsData } from '../data/churchData';
+import { getEvents } from '../api/api';
 
 export default function EventsMarquee() {
-  if (!eventsData || eventsData.length === 0) return null;
+  const [eventsList, setEventsList] = useState(eventsData);
+
+  useEffect(() => {
+    getEvents()
+      .then((data) => {
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
+          const formatted = data.items.map((ev) => ({
+            id: ev.id,
+            title: ev.title,
+            date: ev.event_date
+              ? new Date(ev.event_date).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })
+              : 'Upcoming',
+            location: ev.location || 'Sanctuary',
+          }));
+          setEventsList(formatted);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  if (!eventsList || eventsList.length === 0) return null;
 
   // Duplicate the list so the scroll loop has no visible seam
-  const items = [...eventsData, ...eventsData];
+  const items = [...eventsList, ...eventsList, ...eventsList];
 
   return (
     <div className="events-marquee">
       <Link to="/events" className="events-marquee-label">
-        <Calendar size={14} /> UPCOMING
+        <Calendar size={14} /> UPCOMING EVENTS
       </Link>
       <div className="events-marquee-track-wrap">
         <div className="events-marquee-track">
@@ -20,7 +45,13 @@ export default function EventsMarquee() {
             <span className="events-marquee-item" key={`${event.id}-${idx}`}>
               <strong>{event.title}</strong>
               <span className="events-marquee-dot">•</span>
-              <span>{event.date}</span>
+              <span className="events-marquee-date">{event.date}</span>
+              {event.location && (
+                <>
+                  <span className="events-marquee-dot">•</span>
+                  <span className="events-marquee-loc">{event.location}</span>
+                </>
+              )}
               <span className="events-marquee-sep">|</span>
             </span>
           ))}
@@ -30,16 +61,16 @@ export default function EventsMarquee() {
       <style>{`
         .events-marquee {
           position: fixed;
-          top: 80px;
+          top: 92px;
           left: 0;
           right: 0;
-          height: 36px;
-          z-index: 999;
+          height: 42px;
+          z-index: 998;
           display: flex;
           align-items: center;
-          background: rgba(230, 200, 117, 0.08);
-          backdropFilter: blur(6px);
-          border-bottom: 1px solid rgba(230, 200, 117, 0.2);
+          background: #091326;
+          border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
           overflow: hidden;
           white-space: nowrap;
         }
@@ -47,52 +78,80 @@ export default function EventsMarquee() {
           flex-shrink: 0;
           display: flex;
           align-items: center;
-          gap: 0.35rem;
+          gap: 0.4rem;
           height: 100%;
-          padding: 0 1rem;
-          background: var(--bg-dark);
-          color: var(--accent-gold);
-          font-size: 0.72rem;
-          font-weight: 700;
+          padding: 0 1.1rem;
+          background: #111f38;
+          color: #d4af37;
+          font-size: 0.75rem;
+          font-weight: 800;
           letter-spacing: 0.1em;
           text-decoration: none;
-          border-right: 1px solid rgba(230, 200, 117, 0.2);
-          z-index: 1;
+          border-right: 1px solid rgba(212, 175, 55, 0.3);
+          z-index: 2;
+        }
+        .events-marquee-label:hover {
+          color: #ffffff;
+          background: #182a4a;
         }
         .events-marquee-track-wrap {
           flex: 1;
           overflow: hidden;
+          position: relative;
+          width: 100%;
         }
         .events-marquee-track {
-          display: inline-flex;
+          display: flex;
           align-items: center;
-          animation: events-marquee-scroll 40s linear infinite;
+          width: max-content;
+          white-space: nowrap;
+          will-change: transform;
+          animation: eventsMarqueeScroll 25s linear infinite;
+        }
+        .events-marquee-track:hover {
+          animation-play-state: paused;
         }
         .events-marquee-item {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0 1rem;
-          font-size: 0.8rem;
-          color: var(--text-light);
+          padding: 0 1.25rem;
+          font-size: 0.82rem;
+          color: #ffffff;
         }
         .events-marquee-item strong {
-          color: var(--accent-gold);
+          color: #f3e5ab;
+          font-weight: 700;
+        }
+        .events-marquee-date {
+          color: #d4af37;
           font-weight: 600;
         }
+        .events-marquee-loc {
+          color: rgba(255, 255, 255, 0.7);
+          font-style: italic;
+        }
         .events-marquee-dot {
-          color: var(--accent-gold);
-          opacity: 0.6;
+          color: #d4af37;
+          font-size: 0.9rem;
         }
         .events-marquee-sep {
-          margin-left: 1rem;
-          color: rgba(255,255,255,0.15);
+          margin-left: 1.25rem;
+          color: rgba(212, 175, 55, 0.25);
+          font-weight: 300;
         }
-        @keyframes events-marquee-scroll {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
+        @keyframes eventsMarqueeScroll {
+          0% {
+            transform: translate3d(0, 0, 0);
+          }
+          100% {
+            transform: translate3d(-33.333%, 0, 0);
+          }
         }
         @media (max-width: 640px) {
+          .events-marquee {
+            top: 72px;
+          }
           .events-marquee-label span { display: none; }
         }
       `}</style>

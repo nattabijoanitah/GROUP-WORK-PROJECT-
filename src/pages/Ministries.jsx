@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createContactMessage } from '../api/api';
 import { Flame, Music, Sparkles, Baby, HeartHandshake, Shield, Heart, Compass, BookOpen, Clock, User, Check } from 'lucide-react';
 import { ministriesData } from '../data/churchData';
 import heroImg from '../assets/about-ihema.jpg';
@@ -20,24 +21,31 @@ export default function Ministries() {
   const [selectedMinistry, setSelectedMinistry] = useState(null);
   const [joinForm, setJoinForm] = useState({ name: '', email: '', phone: '', comments: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  const handleJoinSubmit = (e) => {
+  const handleJoinSubmit = async (e) => {
     e.preventDefault();
-    if (joinForm.name.trim()) {
-      const applications = JSON.parse(localStorage.getItem('ministry_joins') || '[]');
-      applications.push({
-        ministryId: selectedMinistry.id,
-        ministryName: selectedMinistry.name,
-        ...joinForm,
-        date: new Date().toISOString()
+    if (!joinForm.name.trim() || !joinForm.email.trim()) return;
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      await createContactMessage({
+        name: joinForm.name,
+        email: joinForm.email,
+        phone: joinForm.phone,
+        details: `[MINISTRY JOIN REQUEST] ${selectedMinistry.name}\n\n${joinForm.comments || 'No additional comments.'}`
       });
-      localStorage.setItem('ministry_joins', JSON.stringify(applications));
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         setSelectedMinistry(null);
         setJoinForm({ name: '', email: '', phone: '', comments: '' });
       }, 3000);
+    } catch (err) {
+      setSubmitError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -273,7 +281,7 @@ export default function Ministries() {
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Turyasingura Grace "
+                        placeholder="Enter your full name"
                         value={joinForm.name}
                         onChange={(e) => setJoinForm({ ...joinForm, name: e.target.value })}
                         required
@@ -284,7 +292,7 @@ export default function Ministries() {
                       <input
                         type="email"
                         className="form-control"
-                        placeholder="turyasinguragrace@gmail.com"
+                        placeholder="Enter your email address"
                         value={joinForm.email}
                         onChange={(e) => setJoinForm({ ...joinForm, email: e.target.value })}
                         required
@@ -296,7 +304,7 @@ export default function Ministries() {
                     <input
                       type="tel"
                       className="form-control"
-                      placeholder="+256 785141496"
+                      placeholder="Enter your phone number"
                       value={joinForm.phone}
                       onChange={(e) => setJoinForm({ ...joinForm, phone: e.target.value })}
                     />
@@ -311,7 +319,8 @@ export default function Ministries() {
                       onChange={(e) => setJoinForm({ ...joinForm, comments: e.target.value })}
                     />
                   </div>
-                  <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
+                  {submitError && <p style={{ color: '#ff6b6b', fontSize: '0.85rem', marginTop: '0.5rem' }}>{submitError}</p>}
+                  <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }} disabled={submitting}>
                     Submit Registration
                   </button>
                 </form>

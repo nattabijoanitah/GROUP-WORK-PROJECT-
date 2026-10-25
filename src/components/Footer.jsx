@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createContactMessage } from '../api/api';
 import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import logoImg from '../assets/ark2-removebg-preview.png';
@@ -6,17 +7,23 @@ import logoImg from '../assets/ark2-removebg-preview.png';
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [subscribeError, setSubscribeError] = useState('');
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
-    if (email.trim()) {
-      // Mock save to local storage
-      const subscribers = JSON.parse(localStorage.getItem('newsletter_subscribers') || '[]');
-      subscribers.push({ email, date: new Date().toISOString() });
-      localStorage.setItem('newsletter_subscribers', JSON.stringify(subscribers));
+    if (!email.trim()) return;
+    setSubscribeError('');
+    try {
+      await createContactMessage({
+        name: 'Newsletter Subscriber',
+        email,
+        details: '[NEWSLETTER SIGNUP] Please add this email to the newsletter list.'
+      });
       setSubmitted(true);
       setEmail('');
       setTimeout(() => setSubmitted(false), 5000);
+    } catch (err) {
+      setSubscribeError('Could not subscribe right now. Please try again.');
     }
   };
 
@@ -146,6 +153,11 @@ export default function Footer() {
             {submitted && (
               <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--accent-gold)', marginTop: '0.5rem' }}>
                 Thank you for subscribing!
+              </span>
+            )}
+            {subscribeError && (
+              <span style={{ display: 'block', fontSize: '0.8rem', color: '#ff6b6b', marginTop: '0.5rem' }}>
+                {subscribeError}
               </span>
             )}
           </div>

@@ -1,18 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { galleryData } from '../data/churchData';
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import heroImg from '../assets/about-ihema.jpg';
+import { getGallery, API_BASE_URL } from '../api/api';
 
 export default function Gallery() {
   const [activeFilter, setActiveFilter] = useState('All');
-  const [lightboxIndex, setLightboxIndex] = useState(null); // stores index of currently open image in active items
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [allGalleryItems, setAllGalleryItems] = useState(galleryData);
+
+  useEffect(() => {
+    getGallery()
+      .then((data) => {
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
+          const formattedApiItems = data.items.map((item) => {
+            const imgUrl = item.url
+              ? (item.url.startsWith('http') ? item.url : `${API_BASE_URL}/${item.url.replace(/^\/+/, '')}`)
+              : heroImg;
+            return {
+              id: `api-${item.id}`,
+              title: item.filename || 'Gallery Image',
+              category: 'Services',
+              url: imgUrl,
+              description: item.filename || 'IHEMA Fellowship Gallery',
+            };
+          });
+          setAllGalleryItems([...formattedApiItems, ...galleryData]);
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not fetch dynamic gallery from API, displaying static gallery:', err);
+      });
+  }, []);
 
   const categories = ['All', 'Services', 'Community'];
 
   // Filtered gallery items
   const displayItems = activeFilter === 'All'
-    ? galleryData
-    : galleryData.filter(item => item.category === activeFilter);
+    ? allGalleryItems
+    : allGalleryItems.filter(item => (item.category || '').toLowerCase() === activeFilter.toLowerCase());
+
 
   const openLightbox = (index) => {
     setLightboxIndex(index);

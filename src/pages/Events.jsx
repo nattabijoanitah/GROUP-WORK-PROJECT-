@@ -1,38 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { eventsData } from '../data/churchData';
 import EventCard from '../components/EventCard';
 import { Check, Info } from 'lucide-react';
 import heroImg from '../assets/about-ihema.jpg';
+import { getEvents, API_BASE_URL, createContactMessage } from '../api/api';
 
 export default function Events() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [regForm, setRegForm] = useState({ name: '', email: '', phone: '', tickets: '1' });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [activeTab, setActiveTab] = useState('All');
+  const [allEvents, setAllEvents] = useState(eventsData);
+
+  useEffect(() => {
+    getEvents()
+      .then((data) => {
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
+          const formattedApiEvents = data.items.map((item) => {
+            let dateStr = 'Upcoming';
+            let timeStr = '10:00 AM';
+            if (item.event_date) {
+              try {
+                const d = new Date(item.event_date);
+                dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+              } catch (_) {}
+            }
+            const imgUrl = item.image_url
+              ? (item.image_url.startsWith('http') ? item.image_url : `${API_BASE_URL}/${item.image_url.replace(/^\/+/, '')}`)
+              : heroImg;
+            return {
+              id: `api-${item.id}`,
+              title: item.title,
+              date: dateStr,
+              time: timeStr,
+              location: item.location || 'IHEMA Sanctuary',
+              category: 'Conference',
+              image: imgUrl,
+              description: item.description || '',
+              speaker: 'Pastor Joanitah',
+            };
+          });
+          setAllEvents([...formattedApiEvents, ...eventsData]);
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not fetch dynamic events from API, displaying static events:', err);
+      });
+  }, []);
 
   const categories = ['All', 'Conference', 'Youth', 'Prayer Night', 'Marriage'];
 
   const filteredEvents = activeTab === 'All'
-    ? eventsData
-    : eventsData.filter(e => e.category.toLowerCase() === activeTab.toLowerCase());
+    ? allEvents
+    : allEvents.filter(e => (e.category || '').toLowerCase() === activeTab.toLowerCase());
 
-  const handleRegisterSubmit = (e) => {
+
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
-    if (regForm.name.trim()) {
-      const registrations = JSON.parse(localStorage.getItem('event_registrations') || '[]');
-      registrations.push({
-        eventId: selectedEvent.id,
-        eventTitle: selectedEvent.title,
-        ...regForm,
-        date: new Date().toISOString()
+    if (!regForm.name.trim() || !regForm.email.trim()) return;
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      await createContactMessage({
+        name: regForm.name,
+        email: regForm.email,
+        phone: regForm.phone,
+        details: `[EVENT REGISTRATION] ${selectedEvent.title}\nNumber of seats: ${regForm.tickets}`
       });
-      localStorage.setItem('event_registrations', JSON.stringify(registrations));
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         setSelectedEvent(null);
         setRegForm({ name: '', email: '', phone: '', tickets: '1' });
       }, 3000);
+    } catch (err) {
+      setSubmitError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -176,7 +223,7 @@ export default function Events() {
               <div style={{ textAlign: 'center', padding: '1.5rem 0', color: 'var(--accent-gold)' }}>
                 <Check size={36} style={{ margin: '0 auto 1rem auto', display: 'block' }} />
                 <h4 style={{ marginBottom: '0.5rem' }}>Registration Successful!</h4>
-                <p style={{ color: 'var(--text-light)', fontSize: '0.9rem' }}>We have sent a confirmation details details to your email. See you there!</p>
+                <p style={{ color: 'var(--text-light)', fontSize: '0.9rem' }}>We have sent confirmation details to your email. See you there!</p>
               </div>
             ) : (
               <form onSubmit={handleRegisterSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -228,7 +275,8 @@ export default function Events() {
                     <option value="5">5+ Seats</option>
                   </select>
                 </div>
-                <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
+                {submitError && <p style={{ color: '#ff6b6b', fontSize: '0.85rem', marginTop: '0.5rem' }}>{submitError}</p>}
+                <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }} disabled={submitting}>
                   Confirm Registration
                 </button>
               </form>

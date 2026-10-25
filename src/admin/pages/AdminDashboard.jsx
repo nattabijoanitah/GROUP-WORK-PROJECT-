@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '../components/AdminSidebar';
 import AdminHeader from '../components/AdminHeader';
+import { API_BASE_URL } from '../../api/api';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export default function AdminDashboard() {
       setError('');
 
       const response = await fetch(
-        'http://127.0.0.1:5000/api/admin/dashboard',
+        `${API_BASE_URL}/api/admin/dashboard`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

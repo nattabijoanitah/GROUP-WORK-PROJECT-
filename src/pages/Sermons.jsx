@@ -3,20 +3,58 @@ import { Search, Volume2, Share2, FileText, ArrowRight } from 'lucide-react';
 import { sermonsData } from '../data/churchData';
 import SermonPlayer from '../components/SermonPlayer';
 import heroImg from '../assets/about-ihema.jpg';
+import { getSermons, API_BASE_URL } from '../api/api';
 
 export default function Sermons() {
+  const [allSermons, setAllSermons] = useState(sermonsData);
   const [activeSermon, setActiveSermon] = useState(sermonsData[0]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const [filteredSermons, setFilteredSermons] = useState(sermonsData);
 
+  useEffect(() => {
+    getSermons()
+      .then((data) => {
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
+          const formattedApiSermons = data.items.map((item) => {
+            let dateStr = 'Recent';
+            if (item.created_at) {
+              try {
+                dateStr = new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+              } catch (_) {}
+            }
+            const imgUrl = item.image_url
+              ? (item.image_url.startsWith('http') ? item.image_url : `${API_BASE_URL}/${item.image_url.replace(/^\/+/, '')}`)
+              : heroImg;
+            return {
+              id: `api-${item.id}`,
+              title: item.title,
+              preacher: item.speaker || 'Pastor Joanitah',
+              scripture: item.scripture_reference || 'Holy Bible',
+              date: dateStr,
+              category: 'Faith',
+              duration: '45 mins',
+              image: imgUrl,
+              description: item.description || '',
+            };
+          });
+          const combined = [...formattedApiSermons, ...sermonsData];
+          setAllSermons(combined);
+          setActiveSermon(combined[0]);
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not fetch dynamic sermons from API, displaying static sermons:', err);
+      });
+  }, []);
+
   // Apply filters and searches
   useEffect(() => {
-    let result = sermonsData;
+    let result = allSermons;
 
     // Filter by Category
     if (activeCategory !== 'All') {
-      result = result.filter(s => s.category.toLowerCase() === activeCategory.toLowerCase());
+      result = result.filter(s => (s.category || '').toLowerCase() === activeCategory.toLowerCase());
     }
 
     // Filter by Search query
@@ -24,14 +62,15 @@ export default function Sermons() {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         s =>
-          s.title.toLowerCase().includes(query) ||
-          s.preacher.toLowerCase().includes(query) ||
-          s.scripture.toLowerCase().includes(query)
+          (s.title || '').toLowerCase().includes(query) ||
+          (s.preacher || '').toLowerCase().includes(query) ||
+          (s.scripture || '').toLowerCase().includes(query)
       );
     }
 
     setFilteredSermons(result);
-  }, [searchQuery, activeCategory]);
+  }, [searchQuery, activeCategory, allSermons]);
+
 
   const handleShare = (sermon) => {
     if (navigator.share) {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Play, ArrowRight, HeartHandshake, Calendar, MapPin, Quote } from 'lucide-react';
 import { ministriesData, sermonsData, eventsData, testimoniesData } from '../data/churchData';
-import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000'
+import { createPrayerRequest } from '../api/api';
 // Image references
 import pastorImg from '../assets/prayer-ministry.jpg';
 
@@ -10,6 +10,8 @@ export default function Home() {
   const [showPrayerModal, setShowPrayerModal] = useState(false);
   const [prayerForm, setPrayerForm] = useState({ name: '', email: '', phone: '', request: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   // Get first 3 ministries for preview
   const featuredMinistries = ministriesData.slice(0, 3);
@@ -20,20 +22,31 @@ export default function Home() {
   // Get one testimony to spotlight
   const spotlightTestimony = testimoniesData[0];
 
-  const handlePrayerSubmit = (e) => {
+  const handlePrayerSubmit = async (e) => {
     e.preventDefault();
-    if (prayerForm.request.trim()) {
-      const prayers = JSON.parse(localStorage.getItem('prayer_requests') || '[]');
-      prayers.push({ ...prayerForm, date: new Date().toISOString() });
-      localStorage.setItem('prayer_requests', JSON.stringify(prayers));
+    if (!prayerForm.name.trim() || !prayerForm.request.trim()) return;
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      await createPrayerRequest({
+        name: prayerForm.name,
+        email: prayerForm.email,
+        phone: prayerForm.phone,
+        message: prayerForm.request,
+      });
       setSubmitted(true);
       setTimeout(() => {
         setSubmitted(false);
         setShowPrayerModal(false);
         setPrayerForm({ name: '', email: '', phone: '', request: '' });
       }, 3000);
+    } catch (err) {
+      setSubmitError(err.message || 'Failed to submit prayer request. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
+
 
   return (
     <div className="fade-in" style={{ paddingTop: '116px' }}>
@@ -553,6 +566,11 @@ export default function Home() {
               </div>
             ) : (
               <form onSubmit={handlePrayerSubmit}>
+                {submitError && (
+                  <div style={{ color: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', padding: '0.75rem', borderRadius: '4px', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                    {submitError}
+                  </div>
+                )}
                 <div className="form-group">
                   <label>Full Name</label>
                   <input
@@ -596,11 +614,12 @@ export default function Home() {
                     required
                   />
                 </div>
-                <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-                  Submit Request
+                <button type="submit" className="btn btn-primary" disabled={submitting} style={{ width: '100%', marginTop: '1rem', opacity: submitting ? 0.7 : 1 }}>
+                  {submitting ? 'Submitting...' : 'Submit Request'}
                 </button>
               </form>
             )}
+
           </div>
         </div>
       )}

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../api/api';
 
-const API_BASE_URL = 'http://127.0.0.1:5000';
 
 export default function AdminPages() {
   const [pages, setPages] = useState([]);
@@ -25,7 +25,7 @@ export default function AdminPages() {
       setLoading(true);
       setError('');
 
-      const response = await fetch(`${API_BASE_URL}/api/pages`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/pages`, {
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
@@ -102,7 +102,7 @@ export default function AdminPages() {
       setSaving(true);
       setError('');
 
-      const response = await fetch(`${API_BASE_URL}/api/pages`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/pages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ export default function AdminPages() {
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/pages/${id}`,
+        `${API_BASE_URL}/api/admin/pages/${id}`,
         {
           method: 'DELETE',
           headers: {

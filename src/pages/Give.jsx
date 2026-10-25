@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CreditCard, ShieldCheck, Heart, Landmark, Check } from 'lucide-react';
 import heroImg from '../assets/about-ihema.jpg';
+import { createGiving } from '../api/api';
 
 export default function Give() {
   const [amount, setAmount] = useState('50000');
@@ -8,15 +9,30 @@ export default function Give() {
   const [giveType, setGiveType] = useState('Tithe'); // 'Tithe', 'Offering', 'Missions', 'Building'
   const [paymentMethod, setPaymentMethod] = useState('card'); // 'card', 'bank', 'mobile'
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', cardNumber: '', cardExpiry: '', cardCvv: '' });
 
   const presets = ['10000', '20000', '50000', '100000', '200000', '500000'];
 
-  const handleGiveSubmit = (e) => {
+  const handleGiveSubmit = async (e) => {
     e.preventDefault();
     const finalAmount = amount === 'custom' ? customAmount : amount;
     if (finalAmount && parseFloat(finalAmount) > 0) {
-      // Save giving records
+      setSubmitting(true);
+      try {
+        await createGiving({
+          donor_name: form.name || 'Anonymous Giver',
+          email: form.email || 'donor@ihema.org',
+          amount: parseFloat(finalAmount),
+          currency: 'UGX',
+          purpose: giveType,
+          payment_method: paymentMethod,
+        });
+      } catch (err) {
+        console.warn('API submission failed, persisting locally:', err);
+      }
+
+      // Save giving records locally as well
       const records = JSON.parse(localStorage.getItem('giving_records') || '[]');
       records.push({
         name: form.name || 'Anonymous Giver',
@@ -28,6 +44,7 @@ export default function Give() {
       });
       localStorage.setItem('giving_records', JSON.stringify(records));
       setSubmitted(true);
+      setSubmitting(false);
 
       setTimeout(() => {
         setSubmitted(false);
@@ -278,7 +295,7 @@ export default function Give() {
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Turyasingura Grace "
+                          placeholder="Enter name on card"
                           value={form.name}
                           onChange={(e) => setForm({ ...form, name: e.target.value })}
                           required
@@ -289,7 +306,7 @@ export default function Give() {
                         <input
                           type="email"
                           className="form-control"
-                          placeholder="turyasinguragrace@gmail.com"
+                          placeholder="name@example.com"
                           value={form.email}
                           onChange={(e) => setForm({ ...form, email: e.target.value })}
                           required

@@ -76,14 +76,6 @@ function PublicLayout() {
           <Route path="/give" element={<Give />} />
           <Route path="/pastor" element={<PastorMessage />} />
           <Route path="/services" element={<ChurchServices />} />
-          <Route
-            path="/admin/prayer-requests"
-            element={
-              <AdminLayout>
-                <AdminPrayerRequests />
-              </AdminLayout>
-            }
-          />
         </Routes>
       </main>
 

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../api/api';
 
-const API_BASE_URL = 'http://127.0.0.1:5000';
 
 export default function AdminMessages() {
   const [messages, setMessages] = useState([]);
@@ -19,7 +19,7 @@ export default function AdminMessages() {
       setError('');
 
       const response = await fetch(
-        `${API_BASE_URL}/api/contact-messages`,
+        `${API_BASE_URL}/api/admin/messages`,
         {
           headers: {
             Authorization: `Bearer ${getToken()}`,
@@ -71,10 +71,27 @@ export default function AdminMessages() {
     loadMessages();
   }, []);
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this message?')) return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/messages/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || 'Failed to delete message.');
+      }
+      await loadMessages();
+    } catch (err) {
+      console.error('DELETE MESSAGE ERROR:', err);
+      setError(err.message);
+    }
+  };
+
   const getMessageStatus = (message) => {
-    return String(
-      message.status || 'unread'
-    ).toLowerCase();
+    const s = String(message.status || 'unread').toLowerCase();
+    return s === 'new' ? 'unread' : s;
   };
 
   const filteredMessages =
@@ -486,6 +503,7 @@ export default function AdminMessages() {
                     'Message',
                     'Status',
                     'Date',
+                    'Actions',
                   ].map((heading) => (
                     <th
                       key={heading}
@@ -645,6 +663,24 @@ export default function AdminMessages() {
                                 message.created_at
                               ).toLocaleDateString()
                             : '—'}
+                        </td>
+
+                        <td style={tableCell}>
+                          <button
+                            onClick={() => handleDelete(message.id)}
+                            style={{
+                              padding: '6px 12px',
+                              borderRadius: '7px',
+                              border: '1px solid rgba(239,68,68,0.25)',
+                              background: 'rgba(239,68,68,0.1)',
+                              color: '#fca5a5',
+                              cursor: 'pointer',
+                              fontSize: '11px',
+                              fontWeight: '700',
+                            }}
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     );

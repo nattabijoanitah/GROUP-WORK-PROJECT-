@@ -1,8 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../../api/api';
 
-const API_URL = 'http://127.0.0.1:5000/api/admin/sermons';
+const API_URL = `${API_BASE_URL}/api/admin/sermons`;
 
 export default function AdminSermons() {
   const [sermons, setSermons] = useState([]);

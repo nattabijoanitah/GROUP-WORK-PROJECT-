@@ -18,6 +18,7 @@ export default function AdminHeader() {
     '/admin/pages': 'Pages',
     '/admin/prayer-requests': 'Prayer Requests',
     '/admin/messages': 'Messages',
+    '/admin/giving': 'Giving',
   };
 
   const pageTitle =
