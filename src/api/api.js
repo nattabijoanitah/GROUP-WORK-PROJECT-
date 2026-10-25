@@ -1,4 +1,5 @@
-export const API_BASE_URL = (import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname}:5000` : 'http://127.0.0.1:5000')).replace(/\/+$/, '');
+import { API_BASE_URL } from './config';
+export { API_BASE_URL };
 
 export async function getEvents() {
   const res = await fetch(`${API_BASE_URL}/api/events/`);

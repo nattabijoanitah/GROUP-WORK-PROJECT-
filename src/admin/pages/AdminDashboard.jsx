@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '../components/AdminSidebar';
 import AdminHeader from '../components/AdminHeader';
-import { API_BASE_URL } from '../../api/api';
+import { API_BASE_URL } from '../../api/config';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../../api/api';
+import { API_BASE_URL } from '../../api/config';
 
 export default function AdminGallery() {
   const navigate = useNavigate();
@@ -387,7 +387,7 @@ export default function AdminGallery() {
             {items.map((item) => {
               const imageUrl = item.url?.startsWith('http')
                 ? item.url
-                : `${API_BASE_URL}/${item.url?.replace(/^\/+/, '')}`;
+                : `${API_BASE_URL}/${item.url}`;
 
               return (
                 <div

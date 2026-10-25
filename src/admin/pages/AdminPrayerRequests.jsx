@@ -1,53 +1,16 @@
 
 import React, { useEffect, useState } from 'react';
-import { API_BASE_URL } from '../../api/api';
 
+import { API_BASE_URL } from '../../api/config';
 
 export default function AdminPrayerRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
-  const [updatingId, setUpdatingId] = useState(null);
 
   const getToken = () => {
     return localStorage.getItem('access_token');
-  };
-
-  const markAsAnswered = async (id) => {
-    try {
-      setUpdatingId(id);
-      setError('');
-
-      const response = await fetch(
-        `${API_BASE_URL}/api/admin/prayer-requests/${id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${getToken()}`,
-          },
-          body: JSON.stringify({ status: 'answered' }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message ||
-            data.error ||
-            'Failed to update prayer request.'
-        );
-      }
-
-      await loadRequests();
-    } catch (err) {
-      console.error('PRAYER UPDATE ERROR:', err);
-      setError(err.message);
-    } finally {
-      setUpdatingId(null);
-    }
   };
 
   const loadRequests = async () => {
@@ -110,24 +73,28 @@ export default function AdminPrayerRequests() {
     loadRequests();
   }, []);
 
-  const getPrayerStatus = (req) => {
-    const s = String(req.status || 'pending').toLowerCase();
-    return s === 'new' ? 'pending' : s;
-  };
-
   const filteredRequests =
     filter === 'all'
       ? requests
       : requests.filter(
-          (request) => getPrayerStatus(request) === filter
+          (request) =>
+            String(
+              request.status || ''
+            ).toLowerCase() === filter
         );
 
   const pendingCount = requests.filter(
-    (request) => getPrayerStatus(request) === 'pending'
+    (request) =>
+      String(
+        request.status || ''
+      ).toLowerCase() === 'pending'
   ).length;
 
   const answeredCount = requests.filter(
-    (request) => getPrayerStatus(request) === 'answered'
+    (request) =>
+      String(
+        request.status || ''
+      ).toLowerCase() === 'answered'
   ).length;
 
   return (
@@ -523,7 +490,6 @@ export default function AdminPrayerRequests() {
                     'Prayer Request',
                     'Status',
                     'Date',
-                    'Actions',
                   ].map((heading) => (
                     <th
                       key={heading}
@@ -676,61 +642,6 @@ export default function AdminPrayerRequests() {
                                 request.created_at
                               ).toLocaleDateString()
                             : '—'}
-                        </td>
-
-                        <td
-                          style={
-                            tableCell
-                          }
-                        >
-                          {status !==
-                          'answered' ? (
-                            <button
-                              onClick={() =>
-                                markAsAnswered(
-                                  request.id
-                                )
-                              }
-                              disabled={
-                                updatingId ===
-                                request.id
-                              }
-                              style={{
-                                padding:
-                                  '6px 12px',
-                                borderRadius:
-                                  '7px',
-                                border:
-                                  '1px solid rgba(74,222,128,0.25)',
-                                background:
-                                  'rgba(74,222,128,0.1)',
-                                color:
-                                  '#4ade80',
-                                cursor:
-                                  'pointer',
-                                fontSize:
-                                  '11px',
-                                fontWeight:
-                                  '700',
-                              }}
-                            >
-                              {updatingId ===
-                              request.id
-                                ? 'Updating...'
-                                : '✓ Mark Answered'}
-                            </button>
-                          ) : (
-                            <span
-                              style={{
-                                color:
-                                  'rgba(255,255,255,0.3)',
-                                fontSize:
-                                  '11px',
-                              }}
-                            >
-                              Completed
-                            </span>
-                          )}
                         </td>
                       </tr>
                     );

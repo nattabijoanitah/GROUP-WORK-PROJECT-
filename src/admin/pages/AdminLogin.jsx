@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../../api/api';
+import { API_BASE_URL } from '../../api/config';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -191,6 +191,7 @@ export default function AdminLogin() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@ihema.org"
             required
             style={{
               width: '100%',

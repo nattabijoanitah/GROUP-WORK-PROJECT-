@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../../api/api';
+import { API_BASE_URL } from '../../api/config';
 
 const API_URL = `${API_BASE_URL}/api/admin/events`;
 
