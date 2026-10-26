@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Play, ArrowRight, HeartHandshake, Calendar, MapPin, Quote } from 'lucide-react';
 import { ministriesData, sermonsData, eventsData, testimoniesData } from '../data/churchData';
-import { createPrayerRequest } from '../api/api';
+import { createPrayerRequest, getEvents, getSermons, API_BASE_URL } from '../api/api';
 // Image references
 import pastorImg from '../assets/prayer-ministry.jpg';
 
@@ -15,12 +15,62 @@ export default function Home() {
 
   // Get first 3 ministries for preview
   const featuredMinistries = ministriesData.slice(0, 3);
-  // Get first 3 sermons for preview
-  const latestSermons = sermonsData.slice(0, 3);
-  // Get first 3 upcoming events for preview
-  const upcomingEvents = eventsData.slice(0, 3);
+  // Dynamic sermons and events
+  const [latestSermons, setLatestSermons] = useState(sermonsData.slice(0, 3));
+  const [upcomingEvents, setUpcomingEvents] = useState(eventsData.slice(0, 3));
   // Get one testimony to spotlight
   const spotlightTestimony = testimoniesData[0];
+
+  useEffect(() => {
+    getEvents()
+      .then((data) => {
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
+          const formatted = data.items.slice(0, 3).map((item) => {
+            let dateStr = 'Upcoming';
+            let timeStr = '10:00 AM';
+            if (item.event_date) {
+              try {
+                const d = new Date(item.event_date);
+                dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+              } catch (_) {}
+            }
+            return {
+              id: item.id,
+              title: item.title,
+              date: dateStr,
+              time: timeStr,
+              location: item.location || 'IHEMA Sanctuary',
+              category: 'Fellowship',
+              description: item.description || '',
+            };
+          });
+          setUpcomingEvents(formatted);
+        }
+      })
+      .catch(() => {});
+
+    getSermons()
+      .then((data) => {
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
+          const formatted = data.items.slice(0, 3).map((item) => ({
+            id: item.id,
+            title: item.title,
+            preacher: item.speaker || 'Pastor Joanitah',
+            scripture: item.scripture_reference || 'Holy Bible',
+            date: item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recent',
+            category: 'Faith',
+            duration: '45 mins',
+            image: item.image_url
+              ? (item.image_url.startsWith('http') ? item.image_url : `${API_BASE_URL}/${item.image_url.replace(/^\/+/, '')}`)
+              : pastorImg,
+            description: item.description || '',
+          }));
+          setLatestSermons(formatted);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handlePrayerSubmit = async (e) => {
     e.preventDefault();
@@ -49,7 +99,7 @@ export default function Home() {
 
 
   return (
-    <div className="fade-in" style={{ paddingTop: '116px' }}>
+    <div className="fade-in" style={{ paddingTop: '138px' }}>
       {/* 1. Hero Section */}
       <section
         style={{

@@ -30,7 +30,7 @@ const messages = [
 
 export default function PastorMessage() {
   return (
-    <div className="fade-in" style={{ paddingTop: '116px' }}>
+    <div className="fade-in" style={{ paddingTop: '138px' }}>
       {/* 1. Hero */}
       <section
         style={{

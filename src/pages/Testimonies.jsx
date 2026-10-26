@@ -46,7 +46,7 @@ export default function Testimonies() {
   };
 
   return (
-    <div className="fade-in" style={{ paddingTop: '116px' }}>
+    <div className="fade-in" style={{ paddingTop: '138px' }}>
       {/* 1. Hero Banner */}
       <section
         style={{

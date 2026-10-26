@@ -8,7 +8,7 @@ import { ShieldAlert, Eye, Target, BookOpen, Heart, Flame } from 'lucide-react';
 
 export default function About() {
   return (
-    <div className="fade-in" style={{ paddingTop: '116px' }}>
+    <div className="fade-in" style={{ paddingTop: '138px' }}>
       {/* 1. Branding Header */}
       <section style={{ backgroundColor: '#070b16', padding: '4rem 0 3rem 0', borderBottom: '1px solid var(--border-color)' }}>
         <div className="container" style={{ maxWidth: '1100px' }}>
