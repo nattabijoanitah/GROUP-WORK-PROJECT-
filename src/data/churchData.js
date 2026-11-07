@@ -283,38 +283,45 @@ export const eventsData = [
 export const testimoniesData = [
   {
     id: 'test-1',
-    name: 'Senior Pastor Edson Twesigomwe',
-    location: 'Mukono, Kampala',
+    name: 'Pr. Edson Twesigomwe',
+    location: 'Wakiso, Uganda',
+    date: 'June 7, 2026',
     text: `For five years, I endured a serious heart condition that significantly affected my life. Throughout this period, I sought medical attention from several reputable and recommended hospitals across Uganda, hoping to find effective treatment. I was told that the severity of my heart condition was beyond what doctors in Uganda, Kenya, and even South Africa could treat.
 
 The last doctor I consulted was at Mulago Hospital. After examining me, the doctor prescribed medication that cost approximately UGX 500,000 per week. I was also advised to save about UGX 100 million so that I could travel to India for the heart surgery I needed.
 
-Through my wife's encouragement and advice, I was eventually able to attend Ihema Christian Felloship International Church, and that decision became a turning point in my life. It was there that I encountered the Word of God that brings healing. God touched my life and healed my heart. I was healed without undergoing the surgery and without relying on the medication prescribed by the doctors. God Himself became my healer.
+Through my wife's encouragement and advice, I was eventually able to attend Ihema Christian Fellowship International Church, and that decision became a turning point in my life. It was there that I encountered the Word of God that brings healing. God touched my life and healed my heart. I was healed without undergoing the surgery and without relying on the medication prescribed by the doctors. God Himself became my healer.
 
 Today, I stand as a living testimony of God's healing power. What seemed impossible from a medical perspective, God made possible through His grace and mercy.
 
-I give all the glory, honor, and praise to God for healing me and giving me a new testimony.`,
-   
+I give all the glory, honor, and praise to God for healing me and giving me a new testimony.`
   },
   {
     id: 'test-2',
     name: 'Mr. Mubangizi Benon',
     location: 'Kampala, Uganda',
+    date: 'June 14, 2026',
     text: `For 20 years, I lived without having children. In my desperation, I sought help from different traditional healers and witch doctors, hoping they would help me have children, but none could. Eventually, I became discouraged, gave up, and turned to alcohol and drunkenness. I also searched for different women, hoping one of them would be able to bear me a child, but none did.
 
 Later, I was told about a powerful traditional healer in Mukono District, Uganda, who was believed to be able to give people children. While I was still in the process of accessing the traditional healer, I came to know about Ihema Church, where Mummy prayed for me. Through her prayers, I received my healing, and my life was transformed.
 
-From that moment, my life changed. God blessed me with both sons and daughters, and my children became a testimony of His faithfulness and power. I encourage everyone not to put their trust in traditional healers, but to trust in God and believe in His power, even when the situation seems impossible.`,
-    
+From that moment, my life changed. God blessed me with both sons and daughters, and my children became a testimony of His faithfulness and power. I encourage everyone not to put their trust in traditional healers, but to trust in God and believe in His power, even when the situation seems impossible.`
   },
   {
     id: 'test-3',
     name: 'Muhoozi Godwin Byamugisha',
-    location: 'Wakiso , Uganda',
-    text: 'Praise Jesus!,My name is Muhoozi Godwin Byamugisha, and I would like to testify about what God has done in my life.There was a time when I was using marijuana, and it had become part of my lifestyle. However, I came to realize that I needed to change and leave that way of life behind.Through the Word of God, prayer, and the support and guidance I received from Ihema Church, my life began to change. God gave me the strength to overcome that habit and helped me choose a better path.Today, I am grateful to God because I am no longer the person I used to be. I have left marijuana behind, and I am now focused on building a better life and growing in my relationship with God.I give all the glory to God for transforming my life. I testify that God can change anyone who surrenders their life to Him.'
-    
-  },
- 
+    location: 'Wakiso, Uganda',
+    date: 'June 21, 2026',
+    text: `Praise Jesus! My name is Muhoozi Godwin Byamugisha, and I would like to testify about what God has done in my life.
+
+There was a time when I was using marijuana, and it had become part of my lifestyle. However, I came to realize that I needed to change and leave that way of life behind.
+
+Through the Word of God, prayer, and the support and guidance I received from Ihema Church, my life began to change. God gave me the strength to overcome that habit and helped me choose a better path.
+
+Today, I am grateful to God because I am no longer the person I used to be. I have left marijuana behind, and I am now focused on building a better life and growing in my relationship with God.
+
+I give all the glory to God for transforming my life. I testify that God can change anyone who surrenders their life to Him.`
+  }
 ];
 
 export const galleryData = [
